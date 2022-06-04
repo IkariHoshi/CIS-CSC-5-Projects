@@ -1,6 +1,6 @@
 /*
     Author: Earvin Paras
-    Date:   June 2nd, 2022
+    Date:   June 4th, 2022
     Purpose:  Go Fish! Card Game
  */
 
@@ -51,12 +51,12 @@ void print_hand(const vector<Card>&);
 void initialize(Game&);
 void add_players(Game&);
 void print_game(const Game&);
+void play(Game&);
+Rank get_rank(const vector<Card>&);
 
 int main()
 {
     Game game;
-    initialize(game);
-    deal_cards(game);
     print_game(game);
     play(game);
 }
@@ -154,4 +154,48 @@ void print_game(const Game& game)
     }
 
     print_deck(game.deck);
+}
+
+Rank get_rank(const vector<Card>& hand)
+{
+    bool valid = false; 
+    int rank;
+    while(!valid)
+    {
+        std::cout << "Please enter a rank: ";
+        std::cin >> rank; 
+        for(card c : hand)
+        {
+            if(c.rank == Rank(rank))
+            {
+                valid = true
+            }
+        }
+    }
+
+    return Rank(rank);
+}
+
+void play(Game& game)
+{
+    initialize(game);
+    deal_cards(game);
+
+    bool game_over = false;
+    size_t player = 0;
+    while(!game_over)
+    {
+        std::cout << "Your hand: \n";
+        print_hand(game.players[player].hand);
+        std::cout << "Your score = " << game.players[player].score << "\n";
+        std::cout << "Opponent's hand: \n";
+        size_t opponent = (player + 1) % game.num_players;
+        print_hand(game.players[opponent].hand);
+        std::cout << "Opponent's score: " << game.players[opponent].score << "\n";
+        std::cout << '\n';
+
+        Rank rank = get_rank(game.players[player].hand);
+
+    }
+
 }
