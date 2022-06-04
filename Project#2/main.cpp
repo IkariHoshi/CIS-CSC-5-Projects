@@ -58,6 +58,7 @@ int main()
     initialize(game);
     deal_cards(game);
     print_game(game);
+    play(game);
 }
 
 void initialize(Deck& deck)
@@ -130,14 +131,14 @@ void print_hand(const vector<Card>& hand)
 
 void initialize(Game& game)
 {
-    intialize(game.deck);
+    initialize(game.deck);
     shuffle(game.deck);
     add_players(game);
 }
 
 void add_players(Game& game)
 {
-    for(int player = 0; player < game.num)_players; player++)
+    for(int player = 0; player < game.num_players; player++)
     {
         Player new_player;
         game.players.push_back(new_player);
