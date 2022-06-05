@@ -166,11 +166,11 @@ Rank get_rank(const vector<Card>& hand)
     {
         std::cout << "Please enter a rank: ";
         std::cin >> rank; 
-        for(card c : hand)
+        for(Card c : hand)
         {
             if(c.rank == Rank(rank))
             {
-                valid = true
+                valid = true;
             }
         }
     }
@@ -204,6 +204,24 @@ bool is_match(const vector<Card> hand, Rank chosen_rank)
     return match;
 }
 
+void take_card(Game& game, size_t current_player, Rank chosen_rank)
+{
+    size_t next_player = (current_player + 1) % game,num_players;
+    bool card_taken = false;
+    size_t card_index = 0;
+    while(!card_taken)
+    {
+        Card current_card = game.players[next_player].hand[card_index];
+        if(current_card.rank == chosen_rank)
+        {
+            game.players[current_player].hand.push_back(current_card);
+            game.players[next_player].hand.erase(game.players[next_player].hand.begin() + card_index);
+            card_taken = true;
+        }
+        card_index++;
+    }
+}
+
 void play(Game& game)
 {
     initialize(game);
@@ -223,6 +241,8 @@ void play(Game& game)
         {
             take_card(game, player, rank);
         }
+
+        display_state(game, player);
 
         game_over = true;
 
