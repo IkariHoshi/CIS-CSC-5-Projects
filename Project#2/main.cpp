@@ -56,6 +56,7 @@ Rank get_rank(const vector<Card>&);
 bool is_match(const Game&, size_t, Rank);
 void take_card(Game&, size_t, Rank);
 void draw_card(Game&, size_t);
+void check_for_score(Player&);
 
 
 int main()
@@ -237,6 +238,37 @@ void draw_card(Game& game, size_t player)
     }
 }
 
+void check_for_score(Player& player)
+{
+    vector<bool> marked(player.hand.size(), false);
+    for(size_t i = 0; i < player.hand.size() - 1; i++)
+    {
+        for(size_t j = i + 1; j < player.hand.size(); j++)
+        {
+            if(!marked[i] && !marked[j] && player.hand[i].rank == player.hand[j].rank)
+            {
+                marked[i] = true;
+                marked[j] = true;
+                player.score++;
+            }
+        }      
+    }
+
+    size_t card = 0;
+    while(!player.hand.empty() && card < marked.size())
+    {
+        if(marked[card])
+        {
+            player.hand.erase(player.hand.begin() + card);
+            marked.erase(marked.begin() + card);
+        }
+        else
+        {
+            card++;
+        }
+    }
+}
+
 void play(Game& game)
 {
     initialize(game);
@@ -259,13 +291,24 @@ void play(Game& game)
         else
         {
             std::cout << "Go Fish.";
-            draw_card()
+            draw_card(game, player);
         }
 
         check_for_score(game.players[player]);
-        
 
+        if(game.players[player].hand.empty())
+        {
+            game_over = true;
+        }
 
+        player = next_player;
     }
+
+    std::cout << "Game is over.";
+    for(size_t player = 0; player < game.players.size(); player++)
+    {
+        std::cout << "Player " << player << "'s score is " << game.players[player].score << '\n';
+    }
+
 
 }
