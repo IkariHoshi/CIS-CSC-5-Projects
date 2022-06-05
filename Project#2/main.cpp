@@ -54,6 +54,8 @@ void print_game(const Game&);
 void play(Game&);
 Rank get_rank(const vector<Card>&);
 bool is_match(const Game&, size_t, Rank);
+void take_card(Game&, size_t, Rank);
+void draw_card(Game&, size_t);
 
 
 int main()
@@ -206,7 +208,7 @@ bool is_match(const vector<Card> hand, Rank chosen_rank)
 
 void take_card(Game& game, size_t current_player, Rank chosen_rank)
 {
-    size_t next_player = (current_player + 1) % game,num_players;
+    size_t next_player = (current_player + 1) % game.num_players;
     bool card_taken = false;
     size_t card_index = 0;
     while(!card_taken)
@@ -219,6 +221,19 @@ void take_card(Game& game, size_t current_player, Rank chosen_rank)
             card_taken = true;
         }
         card_index++;
+    }
+}
+
+void draw_card(Game& game, size_t player)
+{
+    if(game.deck.cards.empty())
+    {
+        return;
+    }
+    else
+    {
+        game.players[player].hand.push_back(game.deck.cards[0]);
+        game.deck.cards.erase(game.deck.cards.begin());
     }
 }
 
@@ -237,15 +252,18 @@ void play(Game& game)
 
         size_t next_player = (player + 1) % game.num_players;
 
-        if (is_match(game.players[next_player].hand, rank))
+        if(is_match(game.players[next_player].hand, rank))
         {
             take_card(game, player, rank);
         }
+        else
+        {
+            std::cout << "Go Fish.";
+            draw_card()
+        }
 
-        display_state(game, player);
-
-        game_over = true;
-
+        check_for_score(game.players[player]);
+        
 
 
     }
