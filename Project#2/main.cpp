@@ -53,6 +53,7 @@ void add_players(Game&);
 void print_game(const Game&);
 void play(Game&);
 Rank get_rank(const vector<Card>&);
+bool is_match(const Game&, size_t, Rank);
 
 
 int main()
@@ -177,7 +178,7 @@ Rank get_rank(const vector<Card>& hand)
     return Rank(rank);
 }
 
-void display_state(const Game&, size_t player)
+void display_state(const Game& game, size_t player)
 {
     std::cout << "Your hand: \n";
     print_hand(game.players[player].hand);
@@ -189,6 +190,20 @@ void display_state(const Game&, size_t player)
     std::cout << '\n';
 }
 
+bool is_match(const vector<Card> hand, Rank chosen_rank)
+{
+    bool match = false; 
+    for(Card c : hand)
+    {
+        if(c.rank == chosen_rank)
+        {
+            match = true;
+        }
+    }
+
+    return match;
+}
+
 void play(Game& game)
 {
     initialize(game);
@@ -198,18 +213,13 @@ void play(Game& game)
     size_t player = 0;
     while(!game_over)
     {
-        std::cout << "Your hand: \n";
-        print_hand(game.players[player].hand);
-        std::cout << "Your score = " << game.players[player].score << "\n";
-        std::cout << "Opponent's hand: \n";
-        size_t opponent = (player + 1) % game.num_players;
-        print_hand(game.players[opponent].hand);
-        std::cout << "Opponent's score: " << game.players[opponent].score << "\n";
-        std::cout << '\n';
+        display_state(game, player);
 
         Rank rank = get_rank(game.players[player].hand);
 
-        if (is_match(game, player, rank))
+        size_t next_player = (player + 1) % game.num_players;
+
+        if (is_match(game.players[next_player].hand, rank))
         {
             take_card(game, player, rank);
         }
