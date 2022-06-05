@@ -36,9 +36,9 @@ struct Player {
 };
 
 struct Game {
+    int num_players = 2;
     vector<Player> players;
     Deck deck;
-    int num_players = 2;
     int num_cards_per_hand = 7;
 };
 
@@ -53,6 +53,7 @@ void add_players(Game&);
 void print_game(const Game&);
 void play(Game&);
 Rank get_rank(const vector<Card>&);
+
 
 int main()
 {
@@ -176,6 +177,18 @@ Rank get_rank(const vector<Card>& hand)
     return Rank(rank);
 }
 
+void display_state(const Game&, size_t player)
+{
+    std::cout << "Your hand: \n";
+    print_hand(game.players[player].hand);
+    std::cout << "Your score = " << game.players[player].score << '\n';
+    std::cout << "Opponent's hand: \n";
+    size_t opponent = (player + 1) % game.num_players;
+    print_hand(game.players[opponent].hand);
+    std::cout << "Opponent's score: " << game.players[opponent].score << '\n';
+    std::cout << '\n';
+}
+
 void play(Game& game)
 {
     initialize(game);
@@ -195,6 +208,15 @@ void play(Game& game)
         std::cout << '\n';
 
         Rank rank = get_rank(game.players[player].hand);
+
+        if (is_match(game, player, rank))
+        {
+            take_card(game, player, rank);
+        }
+
+        game_over = true;
+
+
 
     }
 
