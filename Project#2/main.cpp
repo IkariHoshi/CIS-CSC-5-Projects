@@ -8,7 +8,6 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-
 using namespace std;
 using std::vector; 
 using std::string; 
@@ -19,20 +18,18 @@ enum Suit { SPADES, HEARTS, DIAMONDS, CLUBS};
 struct Card {
     Rank rank;
     Suit suit; 
-    int num_suits = 4;
-    int num_ranks = 13; 
+    int num_ranks = 13;
+    int num_suits = 4; 
 };
 
 struct Deck {
     vector<Card> cards;
     string card_back;
-    int max_deck_size = 52;
 };
 
 struct Player {
     vector<Card> hand; 
-    string name;
-    int score;
+    int score = 0;
 };
 
 struct Game {
@@ -50,10 +47,10 @@ bool deal_cards(Game&);
 void print_hand(const vector<Card>&);
 void initialize(Game&);
 void add_players(Game&);
-void print_game(const Game&);
 void play(Game&);
+void display_state(const Game&, size_t);
 Rank get_rank(const vector<Card>&);
-bool is_match(const Game&, size_t, Rank);
+bool is_match(const vector<Card>&, Rank);
 void take_card(Game&, size_t, Rank);
 void draw_card(Game&, size_t);
 void check_for_score(Player&);
@@ -62,7 +59,6 @@ void check_for_score(Player&);
 int main()
 {
     Game game;
-    print_game(game);
     play(game);
 }
 
@@ -114,7 +110,7 @@ bool deal_cards(Game& game)
         return false;
     }
 
-    for (int card = 0; card < game.num_cards_per_hand; ++card)
+    for (int card = 0; card < game.num_cards_per_hand; card++)
     {
         for(int player = 0; player < game.num_players; player++)
         {
@@ -128,7 +124,7 @@ bool deal_cards(Game& game)
 
 void print_hand(const vector<Card>& hand)
 {
-    for (Card c : hand)
+    for(Card c : hand)
     {
         print_card(c);
     }
@@ -193,7 +189,7 @@ void display_state(const Game& game, size_t player)
     std::cout << '\n';
 }
 
-bool is_match(const vector<Card> hand, Rank chosen_rank)
+bool is_match(const vector<Card>& hand, Rank chosen_rank)
 {
     bool match = false; 
     for(Card c : hand)
@@ -221,6 +217,7 @@ void take_card(Game& game, size_t current_player, Rank chosen_rank)
             game.players[next_player].hand.erase(game.players[next_player].hand.begin() + card_index);
             card_taken = true;
         }
+        
         card_index++;
     }
 }
